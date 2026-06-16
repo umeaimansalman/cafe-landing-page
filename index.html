@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regard Cafe — Artisan Coffee House</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --brown-deep:   #3E2723;
+      --brown-coffee: #6D4C41;
+      --cream:        #F5EDE3;
+      --caramel:      #D7A86E;
+      --caramel-dark: #B8864A;
+      --text:         #2E2E2E;
+      --text-light:   #7A6A5A;
+      --white:        #FDFAF7;
+      --shadow:       rgba(62,39,35,.14);
+      --radius-sm:    10px;
+      --radius-md:    18px;
+      --radius-lg:    28px;
+      --transition:   .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ===== PRELOADER ===== */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--brown-deep);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #preloader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .pre-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 8vw, 4rem);
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: .04em;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: preLogoIn .8s .2s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .pre-logo span { color: var(--caramel); }
+    .pre-tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .72rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(253,250,247,.45);
+      opacity: 0;
+      animation: preLogoIn .8s .45s ease forwards;
+    }
+    @keyframes preLogoIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Coffee cup steam loader */
+    .pre-cup {
+      position: relative;
+      width: 60px;
+      opacity: 0;
+      animation: preLogoIn .6s .7s ease forwards;
+    }
+    .pre-cup svg { width: 60px; height: auto; }
+    /* Steam lines */
+    .steam-line {
+      position: absolute;
+      bottom: 100%;
+      width: 3px;
+      background: linear-gradient(to top, var(--caramel), transparent);
+      border-radius: 3px;
+      animation: steamRise 1.6s ease-in-out infinite;
+    }
+    .steam-line:nth-child(1) { left: 14px; height: 18px; animation-delay: 0s; }
+    .steam-line:nth-child(2) { left: 28px; height: 24px; animation-delay: .3s; }
+    .steam-line:nth-child(3) { left: 42px; height: 16px; animation-delay: .6s; }
+    @keyframes steamRise {
+      0%   { transform: translateY(0) scaleY(0); opacity: 0; transform-origin: bottom; }
+      30%  { opacity: 1; }
+      100% { transform: translateY(-14px) scaleY(1.2); opacity: 0; }
+    }
+    /* Progress bar */
+    .pre-bar-wrap {
+      width: min(220px, 60vw);
+      height: 2px;
+      background: rgba(253,250,247,.1);
+      border-radius: 2px;
+      overflow: hidden;
+      opacity: 0;
+      animation: preLogoIn .5s .9s ease forwards;
+    }
+    .pre-bar {
+      height: 100%;
+      background: var(--caramel);
+      border-radius: 2px;
+      width: 0%;
+      animation: loadBar 2.2s 1s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes loadBar { to { width: 100%; } }
+
+    body.loading { overflow: hidden; }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img { display: block; width: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* ===== UTILITY ===== */
+    .container { width: 100%; max-width: 1160px; margin-inline: auto; padding-inline: 22px; }
+    .section-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--caramel-dark);
+      margin-bottom: .6rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--brown-deep);
+    }
+    .section-title em { font-style: italic; color: var(--brown-coffee); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 2rem;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary {
+      background: var(--brown-deep);
+      color: var(--white);
+    }
+    .btn-primary:hover, .btn-primary:active {
+      background: var(--caramel);
+      color: var(--brown-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--brown-deep);
+      border: 1.5px solid var(--brown-deep);
+    }
+    .btn-outline:hover, .btn-outline:active {
+      background: var(--brown-deep);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(245,237,227,.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(215,168,110,.25);
+      transition: box-shadow var(--transition);
+    }
+    .navbar.scrolled { box-shadow: 0 4px 24px var(--shadow); }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      letter-spacing: .02em;
+    }
+    .nav-logo span { color: var(--caramel); }
+
+    /* Desktop nav links */
+    .nav-links {
+      display: none;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 2px;
+      transition: color var(--transition);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--caramel);
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--brown-deep); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { display: none; }
+
+    /* Hamburger */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 26px;
+      height: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hamburger span {
+      display: block;
+      height: 2px;
+      background: var(--brown-deep);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* Mobile drawer */
+    .mobile-menu {
+      position: fixed;
+      top: 62px; left: 0; right: 0;
+      background: var(--white);
+      padding: 2rem var(--container-pad, 22px) 2.5rem;
+      box-shadow: 0 20px 40px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      transform: translateY(-110%);
+      opacity: 0;
+      transition: transform .4s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+      z-index: 999;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+    .mobile-menu.open { transform: translateY(0); opacity: 1; }
+    .mobile-menu a {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--brown-deep);
+      padding: .5rem 0;
+      border-bottom: 1px solid rgba(215,168,110,.2);
+      transition: color var(--transition);
+    }
+    .mobile-menu a:hover { color: var(--caramel); }
+    .mobile-menu .btn { width: 100%; justify-content: center; margin-top: .5rem; }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      padding-top: 62px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(170deg, rgba(62,39,35,.6) 0%, rgba(62,39,35,.2) 50%, rgba(62,39,35,.75) 100%),
+        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=80') center/cover no-repeat;
+      transform-origin: center;
+      animation: heroZoom 14s ease-in-out infinite alternate;
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1); }
+      to   { transform: scale(1.04); }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 3rem 0 4rem;
+      color: var(--white);
+      animation: fadeUp .9s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(215,168,110,.2);
+      border: 1px solid rgba(215,168,110,.5);
+      color: var(--caramel);
+      border-radius: 100px;
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .4rem 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--caramel);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.7); }
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 10vw, 5.5rem);
+      font-weight: 600;
+      line-height: 1.08;
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em { font-style: italic; color: var(--caramel); }
+    .hero-desc {
+      font-size: .95rem;
+      font-weight: 300;
+      color: rgba(253,250,247,.82);
+      max-width: 380px;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-btns .btn-primary {
+      background: var(--caramel);
+      color: var(--brown-deep);
+    }
+    .hero-btns .btn-primary:hover {
+      background: var(--white);
+    }
+    .hero-btns .btn-outline {
+      color: var(--white);
+      border-color: rgba(253,250,247,.5);
+    }
+    .hero-btns .btn-outline:hover {
+      background: rgba(253,250,247,.15);
+      border-color: var(--white);
+    }
+    .hero-scroll {
+      position: absolute;
+      bottom: 2rem; right: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .4rem;
+      color: rgba(253,250,247,.6);
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+    .hero-scroll-line {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(253,250,247,.6), transparent);
+      animation: scrollLine 2s ease infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
+
+    /* ===== STATS BAR ===== */
+    .stats-bar {
+      background: var(--brown-deep);
+      color: var(--white);
+      padding: 2rem 0;
+    }
+    .stats-inner {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--caramel);
+      line-height: 1;
+    }
+    .stat-label { font-size: .72rem; color: rgba(253,250,247,.65); margin-top: .3rem; letter-spacing: .06em; }
+
+    /* ===== MENU SECTION ===== */
+    .menu { padding: 5rem 0; }
+    .section-header { margin-bottom: 2.5rem; }
+    .menu-tabs {
+      display: flex;
+      gap: .5rem;
+      overflow-x: auto;
+      padding-bottom: .5rem;
+      margin-bottom: 2rem;
+      scrollbar-width: none;
+    }
+    .menu-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: .5rem 1.2rem;
+      border-radius: 100px;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: transparent;
+      border: 1.5px solid rgba(109,76,65,.2);
+      color: var(--text-light);
+      transition: var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--brown-deep);
+      color: var(--white);
+      border-color: var(--brown-deep);
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+    .menu-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      gap: 0;
+      box-shadow: 0 2px 14px var(--shadow);
+      transition:
+        transform .38s cubic-bezier(.34,1.56,.64,1),
+        box-shadow .38s ease,
+        border-color .38s ease;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      position: relative;
+    }
+    /* Caramel shimmer sweep on hover */
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 30%,
+        rgba(215,168,110,.13) 50%,
+        transparent 70%
+      );
+      background-size: 220% 100%;
+      background-position: 200% 0;
+      transition: background-position .55s ease;
+      z-index: 1;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+    .menu-card:hover::before {
+      background-position: -60% 0;
+    }
+    /* Lift + glow */
+    .menu-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow:
+        0 20px 48px rgba(62,39,35,.18),
+        0 0 0 1.5px var(--caramel);
+      border-color: var(--caramel);
+    }
+    /* Image zoom on card hover */
+    .menu-card:hover .menu-card-img {
+      transform: scale(1.07);
+    }
+    .menu-card-img {
+      width: 110px;
+      min-height: 120px;
+      flex-shrink: 0;
+      background-size: cover !important;
+      background-position: center !important;
+      position: relative;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
+    .menu-card-badge {
+      position: absolute;
+      top: .6rem; left: .6rem;
+      background: var(--caramel);
+      color: var(--brown-deep);
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .2rem .5rem;
+      border-radius: 4px;
+    }
+    .menu-card-body {
+      padding: 1rem 1.1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .menu-card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      line-height: 1.2;
+      margin-bottom: .3rem;
+      transition: color var(--transition);
+    }
+    .menu-card:hover .menu-card-name { color: var(--caramel-dark); }
+    .menu-card-desc { font-size: .78rem; color: var(--text-light); line-height: 1.5; }
+    .menu-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: .8rem;
+    }
+    .menu-card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--brown-coffee);
+    }
+    .add-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--brown-deep);
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .add-btn:hover, .add-btn:active {
+      background: var(--caramel);
+      color: var(--brown-deep);
+      transform: scale(1.1);
+    }
+
+    /* ===== ABOUT SECTION ===== */
+    .about {
+      padding: 5rem 0;
+      background: var(--brown-deep);
+      color: var(--white);
+      overflow: hidden;
+      position: relative;
+    }
+    .about::before {
+      content: '"';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20rem;
+      color: rgba(215,168,110,.07);
+      position: absolute;
+      top: -3rem; right: -2rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .about .section-label { color: var(--caramel); }
+    .about .section-title { color: var(--white); }
+    .about-text {
+      color: rgba(253,250,247,.72);
+      font-size: .95rem;
+      line-height: 1.8;
+      margin: 1.2rem 0 2rem;
+      max-width: 480px;
+    }
+    .about-img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-top: 2.5rem;
+    }
+    .about-img-wrap {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+    .about-img-wrap:first-child {
+      grid-row: span 2;
+    }
+    .about-img-wrap img {
+      width: 100%;
+      height: 100%;
+      min-height: 140px;
+      transition: transform .6s ease;
+    }
+    .about-img-wrap:hover img { transform: scale(1.05); }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials { padding: 5rem 0; }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 2.5rem;
+    }
+    .testi-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 1.6rem;
+      box-shadow: 0 2px 12px var(--shadow);
+      position: relative;
+      transition: transform var(--transition);
+    }
+    .testi-card:hover { transform: translateY(-4px); }
+    .testi-card::before {
+      content: '❝';
+      font-size: 3rem;
+      color: var(--caramel);
+      opacity: .35;
+      position: absolute;
+      top: .8rem; right: 1.2rem;
+      line-height: 1;
+    }
+    .testi-stars { color: var(--caramel); font-size: .9rem; margin-bottom: .8rem; letter-spacing: 2px; }
+    .testi-text {
+      font-size: .88rem;
+      color: var(--text-light);
+      line-height: 1.7;
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+    .testi-author { display: flex; align-items: center; gap: .8rem; }
+    .testi-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .testi-name { font-weight: 500; font-size: .85rem; color: var(--brown-deep); }
+    .testi-role { font-size: .72rem; color: var(--text-light); }
+
+    /* ===== CONTACT ===== */
+    .contact { padding: 5rem 0; background: var(--white); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .contact-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--brown-deep);
+      margin-bottom: 1rem;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+      margin-bottom: .9rem;
+      font-size: .88rem;
+      color: var(--text-light);
+    }
+    .contact-icon {
+      width: 36px; height: 36px;
+      background: var(--cream);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr; gap: .9rem; }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    .form-field label { font-size: .78rem; font-weight: 500; color: var(--brown-deep); letter-spacing: .04em; }
+    .form-field input,
+    .form-field textarea {
+      background: var(--cream);
+      border: 1.5px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: .85rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      width: 100%;
+      resize: vertical;
+    }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: var(--text-light); }
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--caramel);
+      box-shadow: 0 0 0 3px rgba(215,168,110,.15);
+    }
+    .form-field textarea { min-height: 110px; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--brown-deep);
+      color: rgba(253,250,247,.7);
+      padding: 3rem 0 2rem;
+    }
+    .footer-top {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(215,168,110,.15);
+    }
+    .footer-brand .nav-logo { font-size: 1.6rem; }
+    .footer-tagline {
+      font-size: .82rem;
+      color: rgba(253,250,247,.5);
+      margin-top: .4rem;
+      max-width: 240px;
+      line-height: 1.6;
+    }
+    .footer-col h4 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--caramel);
+      margin-bottom: .9rem;
+    }
+    .footer-col a {
+      display: block;
+      font-size: .84rem;
+      color: rgba(253,250,247,.6);
+      margin-bottom: .5rem;
+      transition: color var(--transition);
+    }
+    .footer-col a:hover { color: var(--white); }
+    .footer-social {
+      display: flex;
+      gap: .7rem;
+      margin-top: .5rem;
+    }
+    .social-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: rgba(253,250,247,.08);
+      display: grid;
+      place-items: center;
+      font-size: .9rem;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .social-btn:hover {
+      background: var(--caramel);
+      color: var(--brown-deep);
+    }
+    .footer-bottom {
+      padding-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+      text-align: center;
+    }
+    .footer-bottom p { font-size: .78rem; color: rgba(253,250,247,.4); }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== TABLET (600px+) ===== */
+    @media (min-width: 600px) {
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+      .menu-card { flex-direction: column; }
+      .menu-card-img { width: 100%; height: 180px; overflow: hidden; }
+      .form-row { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .about-text { font-size: 1rem; }
+    }
+
+    /* ===== DESKTOP (900px+) ===== */
+    @media (min-width: 900px) {
+      .hamburger { display: none; }
+      .nav-links { display: flex; align-items: center; gap: 2rem; }
+      .nav-cta { display: inline-flex; }
+
+      .hero-content { padding-bottom: 5rem; }
+      .hero-title { max-width: 600px; }
+
+      .menu-grid { grid-template-columns: repeat(3, 1fr); }
+
+      .about-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+      .about-img-grid { margin-top: 0; }
+
+      .contact-grid { grid-template-columns: 1fr 1.4fr; }
+
+      .footer-top {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr 1fr;
+        gap: 2.5rem;
+      }
+      .footer-bottom { flex-direction: row; justify-content: space-between; }
+
+      .testimonials-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* ===== LARGE DESKTOP (1200px+) ===== */
+    @media (min-width: 1200px) {
+      .hero-title { max-width: 700px; }
+    }
+  </style>
+</head>
+<body class="loading">
+
+  <!-- ===== PRELOADER ===== -->
+  <div id="preloader">
+    <div class="pre-cup">
+      <!-- Steam lines -->
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+      <!-- Coffee cup SVG -->
+      <svg viewBox="0 0 60 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cup body -->
+        <path d="M6 12 L10 42 Q10 44 12 44 L48 44 Q50 44 50 42 L54 12 Z"
+              fill="#6D4C41" stroke="#D7A86E" stroke-width="1.2"/>
+        <!-- Liquid inside -->
+        <path d="M9 18 L12 40 Q12 42 14 42 L46 42 Q48 42 48 40 L51 18 Z"
+              fill="#3E2723" opacity=".8"/>
+        <!-- Handle -->
+        <path d="M50 20 Q62 20 62 30 Q62 40 50 38"
+              stroke="#D7A86E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Saucer -->
+        <ellipse cx="30" cy="44" rx="26" ry="3" fill="#6D4C41" opacity=".5"/>
+        <!-- Foam dots -->
+        <circle cx="24" cy="26" r="3" fill="#D7A86E" opacity=".6"/>
+        <circle cx="33" cy="23" r="2" fill="#D7A86E" opacity=".5"/>
+        <circle cx="40" cy="27" r="2.5" fill="#D7A86E" opacity=".55"/>
+      </svg>
+    </div>
+
+    <div>
+      <div class="pre-logo"><span>Regard</span> Cafe</div>
+      <div class="pre-tagline">Artisan Coffee House</div>
+    </div>
+
+    <div class="pre-bar-wrap">
+      <div class="pre-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo"><span>Regard</span> Cafe</a>
+
+      <!-- Desktop links -->
+      <ul class="nav-links">
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#contact">Visit Us</a></li>
+      </ul>
+
+      <a href="#contact" class="btn btn-primary nav-cta">Reserve a Table</a>
+
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#menu"         onclick="closeMenu()">Menu</a>
+    <a href="#about"        onclick="closeMenu()">Our Story</a>
+    <a href="#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="#contact"      onclick="closeMenu()">Visit Us</a>
+    <a href="#contact" class="btn btn-primary" onclick="closeMenu()">Reserve a Table</a>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="container hero-content">
+      <div class="hero-tag">Now open · Daily 7am – 10pm</div>
+      <h1 class="hero-title">Where every sip<br>tells a <em>story</em></h1>
+      <p class="hero-desc">Handcrafted coffee, artisan pastries, and a welcoming space designed for every moment.</p>
+      <div class="hero-btns">
+        <a href="#menu"    class="btn btn-primary">Order Now ↗</a>
+        <a href="#about"   class="btn btn-outline">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ===== STATS BAR ===== -->
+  <div class="stats-bar">
+    <div class="container stats-inner">
+      <div>
+        <div class="stat-num">12+</div>
+        <div class="stat-label">Years Brewing</div>
+      </div>
+      <div>
+        <div class="stat-num">40k</div>
+        <div class="stat-label">Happy Guests</div>
+      </div>
+      <div>
+        <div class="stat-num">96%</div>
+        <div class="stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MENU SECTION ===== -->
+  <section class="menu" id="menu">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Our Offerings</div>
+        <h2 class="section-title">Crafted with <em>care</em></h2>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="menu-tabs reveal">
+        <button class="tab-btn active" onclick="filterMenu('all',this)">All</button>
+        <button class="tab-btn" onclick="filterMenu('coffee',this)">Coffee</button>
+        <button class="tab-btn" onclick="filterMenu('pastry',this)">Pastries</button>
+        <button class="tab-btn" onclick="filterMenu('cold',this)">Cold Drinks</button>
+        <button class="tab-btn" onclick="filterMenu('special',this)">Specials</button>
+      </div>
+
+      <div class="menu-grid" id="menuGrid">
+
+        <!-- Card 1 -->
+        <div class="menu-card reveal" data-cat="coffee">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Bestseller</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Signature Flat White</div>
+              <div class="menu-card-desc">Velvety microfoam poured over a rich double ristretto, finished with silky oat milk.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,150</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="menu-card reveal" data-cat="coffee">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Hazelnut Latte</div>
+              <div class="menu-card-desc">Rich espresso infused with house-roasted hazelnut flavors, blended with velvety steamed milk.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,050</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">New</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Salted Caramel Croissant</div>
+              <div class="menu-card-desc">Flaky butter croissant filled with our signature salted caramel and finished with a touch of sea salt.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 850</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="menu-card reveal" data-cat="cold">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Cold Brew Tonic</div>
+              <div class="menu-card-desc">18-hour cold brew served over premium tonic water, finished with a twist of citrus peel.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 980</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="menu-card reveal" data-cat="special">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Seasonal</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Rose Cardamom Latte</div>
+              <div class="menu-card-desc">An aromatic blend of rose water, cardamom, rich espresso, and creamy oat milk.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,000</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1611293388250-580b08c4a145?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Almond Kouign-Amann</div>
+              <div class="menu-card-desc">Caramelized layers of buttery, flaky pastry filled with toasted almond frangipane.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 900</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="menu-card reveal" data-cat="coffee">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1534778101976-62847782c213?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Fan Fave</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Caramel Macchiato</div>
+              <div class="menu-card-desc">Vanilla-infused milk layered with bold espresso and finished with a drizzle of golden caramel.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1000</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="menu-card reveal" data-cat="cold">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Berry Hibiscus Refresher</div>
+              <div class="menu-card-desc">Sun-ripened Alphonso mango blended with chilled hibiscus tea and a hint of lime.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 890</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">New</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Pistachio Danish</div>
+              <div class="menu-card-desc">Buttery, flaky pastry layered with rich pistachio cream and topped with crushed Sicilian pistachios.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 600</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 10 -->
+        <div class="menu-card reveal" data-cat="special">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Seasonal</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Saffron Fog Latte</div>
+              <div class="menu-card-desc">Steamed oat milk infused with delicate saffron threads, honey, and smooth white espresso.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,000</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 11 -->
+        <div class="menu-card reveal" data-cat="cold">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Citrus Honey Cooler</div>
+              <div class="menu-card-desc">Fresh lemon, wildflower honey, and sparkling citrus served over ice for a bright, refreshing finish.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 800</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 12 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1607920591413-4ec007e70023?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Dark Choco Lava Cake</div>
+              <div class="menu-card-desc">Warm single-origin chocolate cake with a molten ganache center, served with fresh cream.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,100</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 13 -->
+        <div class="menu-card reveal" data-cat="coffee">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1557006021-b85faa2bc5e2?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Bestseller</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Dirty Chai Latte</div>
+              <div class="menu-card-desc">Traditional masala chai infused with a double shot of espresso and finished with velvety steamed milk.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 900</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 14 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1504113888839-1c8eb50233d3?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Cinnamon Crumb Cake</div>
+              <div class="menu-card-desc">Moist cinnamon sponge layered with vanilla cream frosting and a touch of brown sugar warmth.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 790</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 15 -->
+        <div class="menu-card reveal" data-cat="cold">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">New</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Smoked Caramel Refresher</div>
+              <div class="menu-card-desc">Smooth caramel flavors with subtle smoky notes and a refreshing finish.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 800</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 16 -->
+        <div class="menu-card reveal" data-cat="special">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1622480916113-9000ac49b79d?w=400&q=80') center/cover;">
+            <div class="menu-card-badge">Chef's Pick</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Lavender Honey Cappuccino</div>
+              <div class="menu-card-desc">Delicate lavender syrup and wildflower honey blended with a rich double ristretto and velvety foam.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 790</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 17 -->
+        <div class="menu-card reveal" data-cat="pastry">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Classic Vanilla Cream Slice</div>
+              <div class="menu-card-desc">Silky vanilla cream layered with soft sponge and finished with a delicate glaze.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 1,000</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 18 -->
+        <div class="menu-card reveal" data-cat="coffee">
+          <div class="menu-card-img" style="background: url('https://images.unsplash.com/photo-1518057111178-44a106bad636?w=400&q=80') center/cover;"></div>
+          <div class="menu-card-body">
+            <div>
+              <div class="menu-card-name">Cinnamon Honey Latte</div>
+              <div class="menu-card-desc">Smooth, aromatic brew infused with honey and warming spices for a rich, comforting flavor.</div>
+            </div>
+            <div class="menu-card-footer">
+              <div class="menu-card-price">Rs. 890</div>
+              <button class="add-btn" aria-label="Add to order">+</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /menu-grid -->
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div class="reveal">
+          <div class="section-label">Our Story</div>
+          <h2 class="section-title">A passion <em>poured</em> into every cup</h2>
+          <p class="about-text">
+            Regard Café was built around a simple idea: exceptional coffee and genuine hospitality belong together. We serve handcrafted drinks, artisan pastries, and carefully curated flavors in a warm, inviting space designed for conversation, comfort, and connection.
+
+          <p class="about-text">
+            At Regard Café, quality is found in the details. Thoughtfully crafted beverages, artisan pastries, and warm hospitality come together to create an experience that's inviting, memorable, and made to be enjoyed at your own pace.
+
+          </p>
+          <a href="#contact" class="btn btn-outline" style="color:var(--white);border-color:rgba(253,250,247,.4);">Find Us</a>
+        </div>
+        <div class="about-img-grid reveal">
+          <div class="about-img-wrap">
+            <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=500&q=80" alt="Barista crafting coffee" loading="lazy" />
+          </div>
+          <div class="about-img-wrap">
+            <img src="https://images.unsplash.com/photo-1459755486867-b55449bb39ff?w=400&q=80" alt="Coffee beans" loading="lazy" />
+          </div>
+          <div class="about-img-wrap">
+            <img src="https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=400&q=80" alt="Cafe interior" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Guest Reviews</div>
+        <h2 class="section-title">Words from our <em>community</em></h2>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">The Rose Cardamom Latte is unforgettable. I don’t mind the long drive just for a cup — it’s worth every mile, every single time.
+</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=47" alt="Sarah M" />
+            <div>
+              <div class="testi-name">Sarah M.</div>
+              <div class="testi-role">Regular customer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">One of the best flat whites I’ve ever had. The space feels calm and thoughtfully designed — perfect for working, reading, or unwinding.
+</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=12" alt="James K" />
+            <div>
+              <div class="testi-name">James K.</div>
+              <div class="testi-role">Coffee enthusiast</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testi-card reveal">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-text">"The almond pastries are exceptional. The staff make you feel truly welcome — they remember your name even after just one visit, which feels rare and genuinely special.
+"</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=32" alt="Priya L" />
+            <div>
+              <div class="testi-name">Priya L.</div>
+              <div class="testi-role">Food blogger</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Find Us</div>
+        <h2 class="section-title">Come say <em>hello</em></h2>
+      </div>
+      <div class="contact-grid">
+
+        <div class="contact-info reveal">
+          <h3>We'd love to see you</h3>
+          <div class="contact-detail">
+            <div class="contact-icon">📍</div>
+            <div>Regard Café, Midtown District<br>Midtown District, Coffee Quarter</div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">🕐</div>
+            <div>Mon – Fri: 7:00 am – 9:00 pm<br>Sat – Sun: 8:00 am – 10:00 pm</div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">📞</div>
+            <div>+92 300 0000000</div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-icon">✉️</div>
+            <div>hello@Regard.cafe</div>
+          </div>
+        </div>
+
+        <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" placeholder="Jane Smith" required />
+            </div>
+            <div class="form-field">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" placeholder="jane@example.com" required />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" placeholder="Table reservation, event enquiry…" />
+          </div>
+          <div class="form-field">
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Tell us how we can help…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message →</button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">i<span>Regard</span> Cafe</div>
+          <p class="footer-tagline">Artisan coffee, honest ingredients, and a warm welcome every single day.</p>
+          <div class="footer-social" style="margin-top:1.2rem;">
+            <div class="social-btn" title="Instagram">&#9654;</div>
+            <div class="social-btn" title="Facebook">f</div>
+            <div class="social-btn" title="TikTok">♪</div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Visit</h4>
+          <a href="#menu">Our Menu</a>
+          <a href="#about">Our Story</a>
+          <a href="#contact">Reservations</a>
+          <a href="#contact">Events</a>
+        </div>
+        <div class="footer-col">
+          <h4>Info</h4>
+          <a href="#">Catering</a>
+          <a href="#">Gift Cards</a>
+          <a href="#">Wholesale</a>
+          <a href="#">Press</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 iRegard Cafe. All rights reserved.</p>
+        <p style="color:rgba(253,250,247,.25)">Designed with ♥ &amp; espresso</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    /* --- Preloader --- */
+    const preloader = document.getElementById('preloader');
+    // Hide after 2.8s (matches bar animation) or when page is fully loaded, whichever is later
+    const hidePreloader = () => {
+      preloader.classList.add('hide');
+      document.body.classList.remove('loading');
+    };
+    // Minimum display time for the animation to finish beautifully
+    const minTime = new Promise(res => setTimeout(res, 2800));
+    const pageLoad = new Promise(res => {
+      if (document.readyState === 'complete') res();
+      else window.addEventListener('load', res);
+    });
+    Promise.all([minTime, pageLoad]).then(hidePreloader);
+
+    /* --- Navbar scroll shadow --- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 30);
+    });
+
+    /* --- Hamburger toggle --- */
+    const hamburger   = document.getElementById('hamburger');
+    const mobileMenu  = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      hamburger.classList.toggle('open', menuOpen);
+      mobileMenu.classList.toggle('open', menuOpen);
+    });
+
+    function closeMenu() {
+      menuOpen = false;
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+
+    // Close menu on outside click
+    document.addEventListener('click', (e) => {
+      if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    /* --- Menu category filter --- */
+    function filterMenu(cat, btn) {
+      // Update active tab
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show/hide cards
+      document.querySelectorAll('.menu-card').forEach(card => {
+        const matches = cat === 'all' || card.dataset.cat === cat;
+        card.style.display = matches ? '' : 'none';
+        // Re-trigger animation
+        if (matches) {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(16px)';
+          setTimeout(() => {
+            card.style.transition = 'opacity .4s ease, transform .4s ease';
+            card.style.opacity   = '1';
+            card.style.transform = 'translateY(0)';
+          }, 30);
+        }
+      });
+    }
+
+    /* --- Add to order button --- */
+    document.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btn.textContent = '✓';
+        btn.style.background = 'var(--caramel)';
+        btn.style.color = 'var(--brown-deep)';
+        setTimeout(() => {
+          btn.textContent = '+';
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 1500);
+      });
+    });
+
+    /* --- Scroll reveal --- */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          // Stagger cards in a grid
+          const delay = entry.target.closest('.menu-grid, .testimonials-grid, .about-img-grid')
+            ? Array.from(entry.target.parentElement.children).indexOf(entry.target) * 80
+            : 0;
+          setTimeout(() => entry.target.classList.add('visible'), delay);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* --- Contact form --- */
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.textContent = 'Message Sent ✓';
+      btn.style.background = 'var(--caramel)';
+      btn.style.color = 'var(--brown-deep)';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = 'Send Message →';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.disabled = false;
+        e.target.reset();
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>
